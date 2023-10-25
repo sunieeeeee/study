@@ -1,0 +1,394 @@
+<컴파일이란?>
+• 사람이 이해하는 언어를 컴퓨터가 이해할 수 있는 언어로 바꾸어주는 과정
+
+<전처리기란?>
+• 컴퓨터 처리에서 중심적인 처리를 행하는 프로그램의 조건에 맞추기 위한 사전처리나
+	사전 준비적인 계산 또는 편성을 행하는 프로그램
+• '앞서 먼저 처리하는 명령' 이라는 뜻
+• 컴파일하기 좋도록 소스의 모양을 정리하는 것
+• ex) 인스타그램처럼 #이 붙는다면 '전처리기'라고 한다,
+
+<css 전처리기(preprocessor)>
+css파일을 만들기 전에 미리 처리한다는 의미
+
+<sass는 전처리기>
+• sass는 css전처리기 (preprocessor) 라고도 한다.
+• css가 만들어지기 전에 이런저런 일들을 먼저 처리해주기 때문이다.
+
+
+<sass 와 scss의 차이>
+• sass라는 것 안에 sass 와 scss 가 있다.
+• 문법만 조금 다름.
+
+
+<Dart Sass>
+• 컴파일이 빠르고 npm으로 배포가 가능하며, Dart Sass로 넘어가는 것을 추천한다.
+• art sass도 npm을 통해 설치할 수 있다.
+
+
+<Npm(노트 패키지 매니저) 이란 ?>
+• 자바스크립트 프로그래밍 언어를 위한 패키지 관리자
+• 노드세계의 수많은 패키지들을 관리해주는 매니저
+• 설치를 해야하거나 최신버전인지 확인해서 자동으로 업뎃 해야하는 일을 npm이 알아서 해준다.	
+
+
+<npm 으로 Dart Sass 설치하기>
+1. npm을 사용하려면 node.js를 다운받아야 한다.
+	• npm은 node.js의 기본 패키지 관리자 이므로 함께 설치된다.
+	• node.js 설치 링크 : https://nodejs.org/ko/
+
+2. 터미널에서 명령어 입력
+	1) npm -v (mac 일 경우)
+	   (=매니저님 / 당신 버전은요?)
+	2) npm install sass -g 
+           (sass 설치)
+	   (=매니저님 / 설치좀요 / sass를 / 글로벌하게)
+	3) npm show sass version
+	   (sass 버전 확인하기) 
+	4) The operation was rejected by your operating system.' 에러가 뜨면, 
+	   sudo 키워드를 붙여 sudo npm install sass -g로 설치한다.
+
+	5) sass --version 으로 sass 에게 설치가 잘 되었는지 물어봐도 된다.
+
+
+<컴파일 방법>
+1. 명령 프롬프트/터미널(이하 커맨드 창)을 열고, cd 를 입력 후 폴더를 드래그 하여 커맨드 창 위에 드롭한다.
+2. 커맨드 창에 sass <변환할 scss 파일명> <변환될 css 파일명>을 입력한다.
+3. 그리고 폴더를 살펴보면 css 파일과 .map이라고 하는 파일이 생성되어 있다.
+4.★ SASS watch 옵션 ★
+  • 컴파일 할 때 매번 수동으로 sass한테 명령을 주지 않아도 되는 명령어
+  • sass --watch style.scss(scss 파일명) style.css(css 파일명) 입력
+  • 아니면 폴더를 감시할 수 있다
+    sass --watch <input 폴더> <output 폴더>
+    sass --watch scss:css
+5. 감시취소 : ctrl + c
+6. 참고 : https://sass-lang.com/documentation/cli/dart-sass
+
+
+<소스맵의 역할>
+• 컴파일된 소스를 원본 소스로 맵핑해주는 역할을 한다.
+• 말 그대로 원래 소스가 어디에 있는지 보여주는 지도라고 할 수 있다.
+
+
+<부모참조>
+1. & 선택자
+• 중첩된 상태일 떄 외부의 선택자를 참조할 수 있다.
+• 부모선택자의 이름을 계속해서 가져다 쓰는 bem방법론에 찰떡이다.
+• (ex)
+  <sass(scss)>
+  .accordion{
+     width : 600px;
+    
+     &__copy{
+      display: none;
+	
+	&--open{
+	  display: block;
+	}
+     }
+  }
+
+
+	▼
+
+
+  <css>
+  .accordion{
+    width: 600px;	
+  }
+  .accordion__copy{
+    display: none;
+  }
+  .accordion__copy--open{
+    display: block;
+  }
+
+
+• & 선택자는 복합 선택자의 시작부분에만 쓸 수 있다.
+  :not(&) 는 가능하지만 .item& 처럼 끝에 쓰는 것은 불가능 하다.
+• @media 같은 at-rules가 중첩되어 있으면 스타일 규칙이 그 안에 있도록 바꿔주기 때문에
+  쉽게 조건을 추가할 수 있다.
+  (ex)
+  <sass(scss)>
+  .print-only{
+    display: none;
+
+    @media print{
+      display: block;
+    }
+  }
+
+
+	▼
+
+
+  <css>
+  .print-only{
+    display: none;
+    @media print{
+      .print-only{
+        display: block;
+      }
+    }
+  }
+
+
+
+<변수>
+• sass에서는 '$변수명: 값;' 으로 변수를 선언해 사용할 수 있다.
+• 변수에는 문자, 숫자, 불린, 컬러값, null 등 다양한 값을 담을 수 있다.
+• (ex)
+  $width: 100rem;
+  $font: "Noto Sans KR";
+  $color: #000;
+  $darkMode: true;
+  $init: null;
+
+  이렇게 속성이나 변수 선언 오른쪽에 있는 값을 SassScript값이라고 부른다.
+  값을 담는데서 끝이 아니고 !=처럼 비교하거나 +, -, * 등의 산술을 할 수도 있고
+  함수의 인자로 넘길 수도 있다.
+
+• 선언 위치에 따라 전역변수 또는 지역변수로 사용할 수도 있다.
+  .header {
+    $var-header: '이 변수는 .header 내에서만 쓸 수 있어요!';
+  }
+ 
+  .body {
+    content: $var-header; //오류!
+  }
+
+• 물론 css에서도 var(--변수명) 이라고 글로벌 변수를 쓸 수 있다.
+  하지만 sass의 변수는 css변수와 조금 다르다.
+  - sass의 변수는 컴파일되면서 사라진다. css 파일에 보이지 않는다.
+  - sass의 변수는 한 번에 단 하나의 값만을 가진다.
+  - sass의 변수는 재할당 시 이전의 내용을 바꾸지 않는다.
+
+• sass변수에서 하이픈(-)과 언더스코어(_)는 동일하게 취급된다.
+  따라서 $font-size 와 $font_size 는 완벽하게 동일하다.
+  (ex)
+  $font_size: 10px;
+  $font-size: 200px;
+ 
+  .underscore {
+      font-size: $font_size; //200px;
+  }
+ 
+  .hypen {
+      font-size: $font-size; //200px;
+  }
+
+
+• 변수는 언제 쓰는게 좋을까?
+  - 값이 여러 곳에서 반복될 때
+  - 수정될 가능성이 높을 때
+
+
+
+<문자열이나 셀렉터 등에 변수를 쓸 때 : 보간법>
+• (ex-1)
+  $name: "cart";
+  .icon-cart {
+      background-image: url("/icons/$name.png");
+  }
+ 
+  /*
+   출력결과:
+   .icon-cart {
+     background-image: url("/icons/$name.png");
+   }
+  */
+• (ex-2)
+  $position: top;
+  .header {
+      position: fixed;
+      $position: 50px;
+  }
+ 
+  /*
+   출력결과: 
+   .header {
+     position: fixed;
+   }
+   (내 $position 어디 간 거야... 😿)
+   */
+
+
+             ▼
+
+• 문자열이나 셀렉터 등에 변수를 쓰려면 그냥은 안되고
+  #{} 이라는 보간(Interpolation)이 필요하다.
+  방법은 변수를 #{} 로 감싸주기만 하면 된다.
+
+  $position: top;
+  $name: cart;
+  $height: 200px;
+ 
+  .header {
+      position: fixed;
+      #{$position}: 50px;
+      background-image: url("/icons/#{$name}.png");
+      width: calc(100vh - #{$height});
+  }
+ 
+  /*
+   출력결과:
+   .header {
+     position: fixed;
+     top: 50px; //야호 top을 인식했다!
+     background-image: url("/icons/cart.png"); //야호(2) cart를 인식했다!
+     width: calc(100vh - 200px);
+   }
+  */
+
+
+<출력스타일>
+• Dart Sass는 두 가지의 출력스타일을 제공한다.
+  1. expanded = 펼쳐주세요! (기본값)
+  2. compressed = 압축해주세요!
+	sass --style=compressed style.scss style.css
+	- compressed 옵션을 선택하면 빈 여백을 가능한 제거하고 전체 스타일시트를 한 줄에 작성해준다.
+	- compressed 옵션일 때는 일반 CSS 주석 /* 주석 */ 도 제거된다.
+	- 하지만 ! 를 붙여 강조하면 압축모드에서도 표시되므로, 
+	  중요한 정보는 /*! 중요한 주석 */ 형태로 남길 수 있다.
+
+
+
+
+<@로 시작하는 scss 문법>
+• @mixin / @include : 스타일 청크(묶음)을 쉽게 재사용 할 수 있다.
+• @extend : 여러 선택자가 스타일을 상속받도록 할 수 있다.
+• @import / @use : 다른 스타일시트에 있는 변수, 함수, 믹스인 등을 불러와 결합해서 쓸 수 있다.
+• @function : sassscript 에서 사용할 수 있는 사용자 정의 함수를 만들 수 있다,
+• @if / @each / @for : 상황에 맞춰 css가 적용되도록 흐름을 제어할 수 있다. (조건문 ,반복문) 
+• @content 구문을 쓰면 @include로 불러와 쓸 때 내용을 추가로 입력할 수 있다.
+
+
+
+
+<★믹스인 : 찍어내기 틀★>
+<@mixin / @include>
+: 믹스인을 사용하면 여기저기 쓸 수 있는 스타일을 정의할 수 있다.
+★ 사용법 ★
+1. @mixin {이름} 으로 공통으로 쓸 속성들을 묶는다.
+2. @include {믹스인 이름} 으로 불러와 사용한다.
+(ex)
+@mixin set-color {
+  color: #fff;
+  background-color: yellow;
+}
+ 
+h1 {
+  @include set-color
+}
+ 
+p {
+  @include set-color
+}
+
+• 변수와 마찬가지로 믹스인 이름을 지을 때 하이픈(-) 과 언더스코어(_)는 동일하게 취급된다.
+
+
+
+
+< @mixin - 인자 >
+• 믹스인은 '인자(Arguments)'를 가질 수 있다. 
+(ex)
+@mixin set-color($color, $bg-color) {
+    color: $color;
+    background-color: $bg-color;
+}
+ 
+h1 {
+    @include set-color(#000, #f0f0f0);
+}
+ 
+p {
+    @include set-color(#bada77, #234510);
+}
+
+
+
+
+< @extend (익스텐드) - 확장 >
+• 기본내용에서 뭔가를 덧붙일 때 사용한다.
+• 반복되는 스타일을 다른곳에 상속하고자 할때 사용
+• 사용법 : @extend 선택자(상속받고자 하는 스타일이 있는 선택자)
+#예시
+.button {
+  font-weight: bold;
+  border-width: 5px;
+}
+
+.button-confirm {
+  @extend .button;
+  border-color: blue;
+}
+
+.button-error {
+  @extend .button;
+  border-color: red;
+}
+
+
+
+
+< % >
+• 익스텐드는 확장시킬 '기본 스타일 선언'이 필요하다.
+• 그렇다는 것은 이 스타일은 컴파일이 된다.
+• 하지만 오로지 확장만을 위해 스타일을 선언하고 싶다면 % 기호를 사용할 수 있다.
+• % 가 포함된 셀렉터는 오로지 @extend로 불러와 쓰기 위해 사용되며 컴파일된 css에 포함되지 않는다.
+
+
+
+
+< @mixin 'vs' @extend >
+• 둘은 무엇이 다를까? -> 둘다 스타일을 캡슐화하고 재사용하기에 좋은 방식이지만 약간의 차이가 있다.
+
+● @mixin
+• 인자를 넣을 수 있다.
+• 선택자 관리가 쉬워서 전역으로 쓰기 편하다
+• 컴파일된 css가 길어진다
+
+● @extend
+• 연관성 있는 셀렉터들을 묶어 관리할 수 있다.
+• 미디어쿼리 등으로 셀렉터가 묶일 수 없다면 쑬 수 없다.
+
+#
+@mixin : 미리 정의한 속성을 복사해서 따로 적용해줌
+@extend :선택자를 함께 묶어 속성을 한번에 적용해줌
+--> 이 차이점에서의 핵심은? "선택자끼리 얼마나 연관성이 있는가" 이다.
+--> 선택자끼리 의미론적 관계가 있다면 @extend를,
+    그렇지 않고 단순히 속성만 겹치는 관계라면 @mixin을 쓰는것을 추천한다.
+
+# 
+같은 코드를 @extend로 했을 때보다 @mixin이 css코드가 더 길다고 해서 신경쓸 필요가 없다
+--> 대부분의 웹 서버는 반보되는 텍스트 청크를 처리하는 알고리즘으로 css를 압축하기 때문에
+    사용자가 다운로드해야하는 양을 크게 늘리지 않는다.
+    즉, css의 길이에 크게 신경쓸 필요가 없다.
+
+#
+@extend가 적합한 곳은 하나의 컴포넌트가 여러 스타일을 갖는 경우, 그것들은 하나의 스타일시트에서 관리할 때 이다.
+예를들면 버튼을 스타일링 할 때 button.scss에서 @extend %button으로 확장시켜 나가는 것이다.
+이 경우 셀렉터 끼리 연관성이 높기 때문에 꼬일 염려가 없고 관리하기도 편하다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
