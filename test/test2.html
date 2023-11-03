@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+  fetch('https://www.error.www')  
+  .then((response) => response.text())  //없는 url로 인한 오류 / promise상태 : rejected
+  .then((result) => { console.log(result); }) //메서드, 콜백실행 X 
+  .catch((error) => { console.log('Hello'); throw new Error('test'); console.log(promise) }) 
+  //콜백실행 O -> 'Hello'출력, 에러발생 / promise상태 : 없는 url의 오류를 catch메서드로 해결을 하여 fulfilled상태로 변환 이지만 또다시 에러 발새으로 인한 rejected 상태.. 맞나?
+
+  .then((result) => { console.log(result); })     // rejected 상태로 인한 메서드, 콜백실행 X 
+  .then(undefined, (error) => { })  // rejected상태로 인한 두번째 콜백? 실행 -> 근데 아무것도 없으므로 패스..? / 여기서 rejected-> fulfilled로 변환
+  .catch((error) => { console.log('JS'); }) // fulfilled상태이므로 패스
+  .then((result) => { console.log(result); }) // fulfiled상태이지만 내용이 없으므로 undefined 출력
+  .finally(() => { console.log('final'); });  //final 출력
+
+  /*
+    <결과>
+    Hello
+    undefined
+    final
+  */
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promisify</title>
+</head>
+<body>
+  <script>
+    /*
+      ● setTimeout 함수 예시
+    */
+    
+    // 특정밀리세컨즈만큼 시간이 지난 후에 text 파라미터로 전달받은 값을 리턴하는 함수이다.
+    function wait (text, milliseconds){
+      setTimeout(()=>text, milliseconds);
+    }
+
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then((response)=> response.text())
+    .then((result)=> wait(`${result} by Codeit`, 2000))  //2초 후에 리스폰스의 내용 뒤에 'by Codeit' 추가하고 리턴
+    .then((result)=> {console.log(result)});
+
+    /*
+      <undefined가 나오는이유>
+      - 이유는 wait 함수에 있다.
+      - wait함수는 내부에서 setTimeout함수를 호출한다.
+      - 그리고 setTimeout 함수의 첫 번째 파라미터로 들어간 콜백이 2초후에 text를 리턴한다. 
+      - 그런데 여기서 혼동하면 안된느 것은 wait 함수가 
+        두 번째 then 메소드 안의 콜백에서 실행될 때
+        wait 함수는 setTimeout 함수를 실행할 뿐 아무것도 리턴하지 않는다.  
+      - setTimeout 함수 안의 콜백이 2초후에 리턴하는 text는, wait함수의 리턴값이 아니다.
+      - wait함수는 단지 setTimeout함수를 실행하고 아무것도 리턴하지 않는 함수일 뿐이다.
+      - 그리고 자바스크립트에서는 함수에서 아무것도 리턴하지 않으면 undefined를 리턴하는 것으로 간주하기 때문에 
+        wait함수의 리턴값은 undefined 이다.
+      - 따라서 세번째 then 메소드의 콜백으로 undefined가 넘어가고, 그래서 undefined가 출력이 된것이다.
+
+      - setTimeout은 비동기 실행되는 함수이다.
+      - Promise Chainin 안에서 이렇게 비동기 실행되는 함수를 바로 사용하면,
+        나중에 실행되는 부분의 리턴값(여기서는 text)를 Promise Chain에서 사용할 수 없게 된다.
+      
+      <해결방법>
+      : Promise객체를 직접 생성하는 방법을 사용하면 된다.
+    */
+
+    // 해결방법
+    function wait(text, milliseconds) {
+      const p = new Promise((resolve, reject) => {
+        setTimeout(() => { resolve(text); }, 2000);
+      });
+      return p;
+    }
+
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then((response) => response.text())
+    .then((result) => wait(`${result} by Codeit`, 2000)) // 2초 후에 리스폰스의 내용 뒤에 'by Codeit' 추가하고 리턴
+    .then((result) => { console.log(result); });
+
+    /*
+      - 리스폰스의 내용 맨 마지막에는 by Codeit 이라는 문구가 잘 붙어서 출력되는 것을 알 수 있다.
+      - 위 코드처럼 기존의 비동기실행함수 (여기서는 setTimeout)의 콜백이 리턴하는 값을 Promise Chain에서 사용하고 싶다면,
+        해당 함수를 감싸서 Promise 객체를 직접 생성하는 코드를 작성해야 한다.
+      - 그리고 그 Promise 객체를 리턴해야 Promise Chain에서 해당 리턴값을 받아서 사용할 수 있다.
+
+      * 이렇게 전통적인 형식의 비동기 실행 함수를 Promise 객체로 감싸서 
+        그 Promise 객체를 리턴하는 형식으로 만드는 작업을 Promisify(프로미스화하다) 라고 한다.
+    */
+
+
+
+
+
+
+    /*
+      ● 콜백 헬(callback hell)과 Promise
+    */
+    /*
+      - 자바스크립트가 실행되는 환경에는 웹브라우저뿐만 아니라 Node.js 라고 하는 것도 있다.
+      - 이 Node.js는 오늘날 자바스크립트를 서버에서도 실행할 수 있게 해주는 또 다른 '자바스크립트 실행 환경'이다.
+      - 이 Node.js에서는 브라우저에서와는 또 다른 비동기 함수들이 제공된다.
+    
+      - fs: readFile 메소드를 가진 객체로, 파일에 관한 기능을 갖고 있다.
+
+      fs.readFile('파일이름', '파일해석기준(인코딩)', (error, data)=>{
+
+      })
+      
+      - 첫 번째 파라미터(error) : 
+        readFile함수는 파일을 읽다가 에러가 발생하면 콜백의 첫 번째 파라미터(error)에
+        해당 에러 객체를 전달하고 콜백을 실행한다.
+      - 두 번째 파라미터(data) :
+        만약 파일을 정상적으로 다 읽었으면 콜백의 두 번째 파라미터(data)에, 읽어드린 파일 내용을 전달하고 콜백을 실행한다.
+
+      - 이 readFile 메소드도, 콜백을 파라미터에 바로 넣는 비동기 실행 함수라는 점에서 setTimeout함수, addEventListener메소드와 비슷하다.
+      - 그런데 이런 현식의 함수들은 콜백헬(callback hell) 이라는 단점을 가진다.
+
+     */
+
+     fs.readFile('file1.txt', 'utf8', (error1, data1) => {
+      if (error1) {
+        console.log(error1);
+      } else {
+        console.log(data1);
+        fs.readFile('file2.txt', 'utf8', (error2, data2) => {
+          if (error2) {
+            console.log(error2);
+          } else {
+            console.log(data2);
+          }
+        });
+      }
+    });
+
+    /*
+      위 코드처럼 쓰면 file1.txt의 내용이 출력되고,
+      그 다음에 file2의 내용이 출력될 것이다.
+      그런데 그 다음으로 file3.txt의 내용도 출력되어야 한다면?
+    */
+
+    fs.readFile('file1.txt', 'utf8', (error1, data1) => {
+      if (error1) {
+        console.log(error1);
+      } else {
+        console.log(data1);
+        fs.readFile('file2.txt', 'utf8', (error2, data2) => {
+          if (error2) {
+            console.log(error2);
+          } else {
+            console.log(data2);
+            fs.readFile('file3.txt', 'utf8', (error3, data3) => {
+              if (error3) {
+                console.log(error3);
+              } else {
+                console.log(data3);
+              }
+            });
+          }
+        });
+      }
+    });
+
+    /*
+      코드를 읽기 너무 어려워짐
+
+      - 콜백을 바로 파라미터에 넣는 전통적인 형식의 비동기 실행 함수들은 이런 문제가 있다.
+      - 바로 순차적으로 비동기 실행 함수들을 실행하려고 하면 콜백안에 또 콜백이 있고, 그 안에 또 콜백이 있는
+        콜백 헬(콜백지옥, callback hell) 현상을 초래하게 된다.
+      
+      <해결방법>
+      : Promisify 를 한다.
+    */
+
+    //해결방법
+    function readFile_promisfied(filename) {
+      const p = new Promise((resolve, reject)=> {
+        fs.readFile(filename, 'utf8', (error, data)=> {
+          if(error) {
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        })
+      })
+
+      return p;
+    }
+
+    /*
+      - 함수 안에서는 Promise 객체를 직접 생성하고 있다.
+      - 그리고 Promise 객체가 생성될 때 실행되는 executor 함수 안에서는 fs객체의 readFile 메소드를 호출했다.
+
+
+      ...                         (error, data) => {
+        if (error) {
+          reject(error); // 에러 발생 시 -> rejected 
+        } else {
+          resolve(data); // 파일 내용 읽기 완료 -> fulfilled 
+        }
+      }
+
+      - 여기서 중요한 것은 작업을 수행하다가 에러가 나면
+        readFile 함수의 콜백에서 reject 함수를 호출하고,
+        파일의 내용을 정상적으로 다 읽었을 때는 resolve 함수를 호출한다.
+
+      - 그리고 reject 함수의 파라미터에는 error 객체를, 
+        resolve 함수의 파라미터에는 파일의 내용인 data를 전달했다.
+    */
+
+    // readFile메소드를 Promisify 해서 만든 readFile_promisified 함수를 사용해서 
+    // 위의 콜백 헬 코드에서 작성 했던 내용을 똑같이 작성한다면?
+    readFile_promisified('file1.txt')
+    .then((data) => { console.log(data); return readFile_promisified('file2.txt'); })
+    .then((data) => { console.log(data); return readFile_promisified('file3.txt'); })
+    .then((data) => { console.log(data); })
+    .catch((error) => { console.log(error); });
+
+    /* 
+      readFile_promisfied 함수는 Promise객체를 리턴하기 때문에 이렇게 자유롭게 Promise Chain 안에서 사용할 수 있다.
+    */
+
+
+      
+
+    /*
+      ● Promisify하면 안되는 함수들도 있다.
+    */
+   /* 
+      - 이제 기존의 전통적인 형식의 비동기 실행 함수도 원하는 경우에는
+        Promisify해서 콜백 헬을 방지할 수 있다는 것을 알게 되었다.
+      - 하지만 전통적인 형식의 비동기 실행 함수라고 해서 모두 Promisify를 할 수 있는 것은 아니다.
+
+      <Promisify 할 수있는 비동기실행함수 X>
+      : 콜백을 한번만 실행하는 것들 (setTimeout, readFile 등)
+
+      <Promisify 할 수없는 비동기실행함수 O>
+      : 콜백을 여러번 실행하는 함수 (setInterval, addEventListener)
+      * 쓸 수 없는 이유 
+      : Promise 객체는 한번 pending 상태에서 fulfilled또는 rejected상태가 되고 나면
+      그 뒤로는 그 상태와 결과가 바뀌지 않기 때문이다.
+    */
+
+
+
+
+ </script>
+</body>
+</html>

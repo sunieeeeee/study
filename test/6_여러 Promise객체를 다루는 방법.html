@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여러 Promise객체를 다루는 방법</title>
+</head>
+<body>
+  <script>
+    /* 
+      ● all 메소드
+
+      https://learn.codeit.kr/api/members/1
+      https://learn.codeit.kr/api/members/2
+      https://learn.codeit.kr/api/members/3
+    */
+    //1번 직원정보
+    let p1 = fetch('https://learn.codeit.kr/api/members/3').then((res)=> res.json());
+    let p2 = fetch('https://learn.codeit.kr/api/members/2').then((res)=> res.json());
+    let p3 = fetch('https://learn.codeit.kr/api/members/3').then((res)=>res.json());
+
+    // Promise
+    // .all([p1, p2, p3])
+    // .then((result)=> console.log(result));
+
+
+    /* 
+      ● race 메소드
+    */
+    /* 
+      - race 메소드도 all 메소드와 마찬가지로 여러 Promise 객체들이 있는 배열을 아규먼트로 받는다. 
+      - 그리고 all 메소드처럼 Promise 객체를 리턴한다.
+      - 하지만 적용원리가 다름
+      - race 메소드가 리턴한 Promise객체는 아규먼트로 들어온 배열의 여러 Promise객체들 중에서
+        가장 먼저 fulfilled 상태 또는 rejected 상태가 된 Promise객체와 동일한 상태와 결과를 갖는다.
+    */
+    const b1 = new Promise((resolve, reject) => {
+      setTimeout(() => resolve('Success'), 1000);
+    });
+    const b2 = new Promise((resolve, reject) => {
+      setTimeout(() => reject(new Error('fail')), 2000);
+    });
+    const b3 = new Promise((resolve, reject) => {
+      setTimeout(() => reject(new Error('fail2')), 4000);
+    });
+
+    Promise
+    .race([b1, b2, b3])
+    .then((result) => {
+      console.log(result); // hello 출력
+    })
+    .catch((value) => {
+      console.log(value);
+    });
+
+    /*  
+      말 그대로 race메소드는 여러 Promise 객체들을 레이스(race, 경쟁)시켜서 가장 빨리 상태가 결정된
+      Promise 객체를 선택하는 메소드 이다.
+    */
+
+
+    
+
+
+    /* 
+      ● allSettled 메소드
+
+      : 배열 내의 모든 Promise객체가 fulfilled 또는 rejected 상태가 되기까지 기다리고,
+      pending상태의 Promise 객체가 하나도 없게 되면, A의 상태값은 fulfilled 상태가 되고
+      그 작업 성공 결과로, 하나의 배열을 갖게 된다.
+
+      이 배열에는 아규먼트로 받았던 배열 내의 각 promise 객체의 
+      (1) 최종상태를 status 프로퍼티,
+      (2) 그 작업성공결과는 value프로퍼티,
+      (3) 그 작업실패정보는 reason 프로퍼티
+
+      에 담은 객체들이 요소로 존재한다.
+
+      [
+        {status: "fulfilled", value: 1},
+        {status: "fulfilled", value: 2},
+        {status: "fulfilled", value: 3},
+        {status: "rejected",  reason: Error: an error}
+      ]
+      이런식으로!
+
+
+      settled : fulfiled 상태와 rejected 상태를 묶어서 settled 상태라고 한다.
+      allSettled 메소드는 말 그대로 배열 속 Promise 객체들이 settled 상태가 되기만 하면 되는 것이다.
+      이에 반해 all 메소드는 모든 Promise 객체들이 fulfilled 상태가 되기를 기다리는 것이다. 
+    */
+
+
+
+    /* 
+      ● any 메소드
+      : 여러 Promise 객체들 중에서 가장 먼저 fulfilled 상태가 된 Promise 객체의 상태와 결과가 A에도  똑같이 반영된다.
+      - 만약 모든 Promise객체가 rejected 상태가 되면 AggregateError라고 하는 에러를 작업실패정보로 갖고
+        rejected 상태가 된다.
+      - any라는 단어의 뜻처럼 배열 속의 Promise 객체 중 단 하나라도 fulfilled상태가 되면 되는 것이다.
+    */
+
+
+
+
+
+
+  </script>
+</body>
+</html>

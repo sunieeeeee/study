@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이미 상태가 결정된 Promise 객체 만들기</title>
+</head>
+<body>
+  <script>
+     /* 
+      ● 이미 상태가 결정된 Promise 객체 만들기
+
+      - 어떤 비동기 작업을 처리할 필요가 있다면,
+        new todtjdwkdhk executor 함수를 사용해서 Promise 객체를 만들어야 하지만,
+        그렇지 않고 바로 상태가 이미 결정된 Promise 객체를 만들고 싶을 때는 resolve, reject 메소드를 사용한다.
+     */
+    
+     // 1. fulfilled상태의 Promise객체 만들기
+    const p = Promise.resolve('sccess');
+    /* 
+      - Promise의 resolve라는 메소드를 사용하면 바로 fulfilled 상태의 Promise 객체를 만들 수 있다.
+      - 위와 같이 쓰면 fulfilled 상태이면서, 작업성공결과로 문자열 'success'를 가진 Promise객체를 만들 수 있다.
+    */
+
+    // 2. rejected상태의 Promise 객체 만들기
+    const p2 = Promise.reject(new Error('fail'));
+    /* 
+      - Promise의 reject라는 메소드를 사용하면 바로 rejected상태의 Promise 객체를 만들 수 있다.
+      - 위와 같이 쓰면 rejected상태이면서, 작업실패정보로 fail이라는 메시지를 가진 Error 객체를 가진 Promise객체를 만들 수 있다.
+    */
+
+    /* 
+       resolve 메소드나 reject 메소드로 생성한 Promise객체도 이때까지 배운것과 동일하게 작동한다.
+    */
+    const p3 = Promise.resolve('sccess');
+    p3.then((result)=>{console.log(result)}, (error)=>{console.log(error)});
+    // 이 코드에서는 첫번째 콜백이 실행되어서 작업성공결과인 문자열 'success'가 출력된다.
+
+    const p4 = Promise.reject(new Error('fail'));
+    p4.then((result)=> {console.log(result);}, (error)=> {console.log(error)})
+    // 이 코드에서는 두번째 콜백이 실행되어서 작업 실패 정보인 Error 객체 내용이 출력된다.
+
+
+
+    /* 
+      * 함수 안에서 리턴하는 값이 여러 개인 경우 모든 리턴값을 Promise 객체로 통일하고 싶을 때,
+      종종 resolve 또는 reject 메소드를 쓴다.
+    */
+    function doSomething(a, b) {
+        //~~
+      if (problem) {
+        throw new Error('Failed due to..');
+      } else {
+        return fetch('https://~');
+      }
+    }
+    /* 
+      위 코드에서는 문제가 발생하는 경우에는 바로 Error객체를 throw 해버리고 있다.
+      만약 문제가 존재하는 경우에도 Promise 객체를 리턴하고 싶다면 reject 메소드를 써서 이렇게 작성할 수 있다.
+    */
+    function doSomething(a, b) {
+      // ~~
+      if (problem) {
+        return Promise.reject(new Error('Failed due to..'));
+      } else {
+        return fetch('https://~');
+      }
+    }
+
+    
+
+
+
+    // 1. fulfilled상태의 Promise객체 만들기
+  </script>
+</body>
+</html>

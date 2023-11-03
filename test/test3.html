@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 직접 만드는 Promise 객체
+
+    // ● 프로미스 객체를 fulfilled 상태로 만들기
+    const p = new Promise((resolve, reject) => {
+      // setTimeout 함수를 써서 resolve파라미터로 연결된 함수를 실행하도록 함.(이것을 그냥 resolve함수라고 함)
+      setTimeout(() => {resolve('success')}, 9000) 
+    });
+
+    /*
+      <코드설명>
+      - resolve 함수는 프로미스 객체를 fulfilled 상태로 만드는 함수이다. 
+      - 그래서 p라는 프로미스 객체가 2초후에 fulfilled상태가 된다는 뜻
+      - 그리고 이때 resolve 함수 안에 넣은 "success"라는 문자열이 "작업성공결과"가 된다.
+    */
+   
+
+    // 2초뒤에 "success"라는 문자열이 출력됨
+    p.then((result)=>{console.log(result)});  
+    /*
+      <코드설명>
+      - 2초뒤에 "success"라는 문자열이 출력됨
+      - 2초뒤에 프로미스 객체가 fulfilled상태가 됨
+      - 그에 따라서 then 메소드 안의 콜백이 실행된다.
+      - 그리고 resolve 함수의 아규먼트로 넣었던 "success"라는 문자열이 작업성공결과가 되어서 "success"라는 문자가 출력이 된다.
+    */
+
+
+    // ● 프로미스 객체를 rejected 상태로 만들기
+    const p2 = new Promise((resolve, reject) => {
+      // reject함수는 생성되는 프로미스 객체를 rejected상태로 만든다.
+      // 그리고 reject의 아규먼트로 넣은 new Error('fail') 이 Error 객체가 작업실패정보가 된다.
+      setTimeout(() => {reject(new Error('fail'))}, 2000) 
+    });
+
+    p2.catch((error)=>{console.log(error)});
+    /*
+      프로미스객체가 2초뒤에 rejected 상태가 되고
+      fail이라는 메시지를 가진 Error객체가 작업실패정보가 된다.
+    */
+
+    /*
+      resolve 함수 : 생성될 프로미스 객체를 fulfilled  상태로 만들 수 있는 함수가 연결된다.
+      reject 함수 : 생성될 프로미스 객체를 rejected 상태로 만들 수 있는 함수가 연결된다.
+    */
+  </script>
+</body>
+</html>

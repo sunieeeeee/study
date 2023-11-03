@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POST Request</title>
+</head>
+<body>
+  <script>
+    const newMember = {
+      name: "이연지",
+      email: "yj@email.net",
+      job: "Frontend Developer"
+    }
+
+    fetch('https://learn.codeit.kr/api/members', {
+      method: 'POST',
+      body: JSON.stringify(newMember)
+    })
+    .then((response)=> response.text())
+    .then((result)=> console.log(result))
+
+  </script>
+</body>
+</html>

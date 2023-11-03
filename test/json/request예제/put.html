@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUT Request</title>
+</head>
+<body>
+  <script>
+    const member = {
+      name: 'Alice',
+      email: 'alice@codeitmall.kr',
+      department: 'dfadfasdfafd'
+    };
+
+    fetch('https://learn.codeit.kr/api/members/2', {
+      method: 'PUT',
+      body: JSON.stringify(member)
+    })
+    .then((res)=> res.text())
+    .then((result)=> console.log(result));
+  </script>
+</body>
+</html>
